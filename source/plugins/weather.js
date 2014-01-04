@@ -1,7 +1,7 @@
 (function () {
 
 	function command ( args, cb ) {
-		args.reply('Working');
+		args.reply('Working...');
 		
 		IO.jsonp({
 			url : 'http://dannybeckett.co.uk/AviationBot/Weather.php',
@@ -13,7 +13,7 @@
 		});
 	
 		function finish ( resp ) {
-			args.reply( resp/*.data.METAR.raw_text*/ );
+			args.reply( 'ok' /*resp.data.METAR.raw_text*/ );
 		}
 	}
 	
