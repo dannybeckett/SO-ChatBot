@@ -6,7 +6,7 @@
 			args.reply('hello');
 			
 			IO.xhr({
-				url:		'/http://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&stationString=' + args + '&hoursBeforeNow=4',
+				url:		'http://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&stationString=' + args + '&hoursBeforeNow=4',
 				method:		'GET',
 				complete:	finish
 			});
