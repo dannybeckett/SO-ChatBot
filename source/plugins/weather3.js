@@ -1,7 +1,11 @@
 (function(){
+	bot.stoplog = true;
+	
 	var weather3 = {
 		command: function(args, cb)
 		{
+			bot.log('hello');
+			
 			IO.xhr({
 				url:		'/http://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&stationString=' + args + '&hoursBeforeNow=4',
 				method:		'GET',
@@ -12,7 +16,7 @@
 			{
 				if(xhr.status === 200)
 				{
-					bot.log(xhr, '/undo remove finish 409' );
+					bot.log('got a 200');
 					return;
 				}
 
