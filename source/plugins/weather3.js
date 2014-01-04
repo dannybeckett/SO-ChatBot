@@ -1,8 +1,6 @@
 (function(){
-	// bot.stoplog = true;
-	
 	var weather3 = {
-		command: function(args, cb)
+		command: function(args)
 		{
 			bot.log('hello');
 			args.reply('hello');
@@ -17,14 +15,7 @@
 			{
 				if(xhr.status === 200)
 				{
-					if(cb)
-					{
-						cb('got a 200');
-					}
-					
-					args.reply('got a 200');
-					bot.log('got a 200');
-					return 'got a 200';
+					args.reply('got a 200: ' + xhr.responseText);
 				}
 			}
 		}
