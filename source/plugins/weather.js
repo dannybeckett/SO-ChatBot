@@ -1,46 +1,69 @@
 (function () {
 "use strict";
 
-	var weather = {
-		icao: function(icao, cb) {
-			IO.xhr({
-				url: 'http://aviationweather.gov/adds/dataserver_current/httpparam',
-				data: {
-					dataSource:		'metars',
-					requestType:	'retrieve',
-					format:			'xml',
-					stationString:	icao,
-					hoursBeforeNow:	'4'
-				},
-				complete: this.finishCb(data, cb)
-			});
-		},
+var weather = {
+	city : function ( city, cb ) {
+		IO.jsonp({
+			url : 'http://dannybeckett.co.uk/AviationBot/Weather.php',
+			jsonpName : 'callback',
+			data : {
+				a : city
+			},
 
-		finishCb : function(data, cb) {
-			var ret = bot.adapter.link(data.stationString, 'http://aviationweather.gov/adds/metars/?station_ids=' + data.stationString + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit') + ': ';
-			
-			cb(ret);
-			
-			return ret;
-		}
-	};
+			fun : this.finishCb( cb ),
+			error : this.errorCb( cb )
+		});
+	},
 
-	function weatherCommand(args) {
-		if(!args.content)
-		{
-			return 'You must specify an ICAO airport name - e.g. `!!weather PHTO`';
+	finishCb : function ( cb ) {
+		var self = this;
+
+		return function ( resp ) {
+			cb( self.format(resp) );
+		};
+	},
+	errorCb : function ( cb ) {
+		return cb;
+	},
+
+	format : function ( resp ) {
+		var main = resp.main;
+
+		if ( !main ) {
+			console.error( resp );
+			return 'Sorry, I couldn\'t get the data: ' + resp.message;
 		}
-		
-		weather.icao(args.content, args.reply.bind(args));
+
+		return this.formatter( resp );
+	},
+	formatter : function ( data ) {
+		/*var ret = bot.adapter.link(
+				data.name, 'http://openweathermap.org/city/' + data.id
+			) + ': ';
+
+		return ret;*/
+		return data.data.METAR.raw_text;
 	}
+};
 
-	bot.addCommand({
-		name:	'weather',
-		fun:	weatherCommand,
-		permissions: {
-			del : 'NONE'
-		},
-		async: true,
-		description: 'Gets current METAR weather data for a specified ICAO airport: `/weather PHTO`'
-	});
+function weatherCommand ( args ) {
+	if ( args.content ) {
+		weather.city( args.content, args.reply.bind(args) );
+	}
+	else {
+		return 'See `/help weather` for usage info';
+	}
+}
+
+bot.addCommand({
+	name : 'weather',
+	fun : weatherCommand,
+	permissions : {
+		del : 'NONE'
+	},
+	async : true,
+
+	description : 'Gets current weather: ' +
+		'`/weather ICAO`'
+});
 }());
