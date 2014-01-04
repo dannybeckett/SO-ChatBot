@@ -7,7 +7,7 @@
 			url : 'http://dannybeckett.co.uk/AviationBot/Weather.php',
 			jsonpName : 'callback',
 			data : {
-				a : args.toString()
+				a : 'PHTO' /*args.toString()*/
 			},
 			fun : finish
 		});
