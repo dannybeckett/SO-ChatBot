@@ -8,7 +8,7 @@ var weather = {
 		
 		if(!icao)
 		{
-			args.directreply(descrip);
+			args.directreply(this.descrip);
 		}
 		
 		IO.jsonp({
