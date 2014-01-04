@@ -1,7 +1,7 @@
 (function () {
 
 	function command ( args, cb ) {
-		args.reply('Working...');
+		// args.reply('Working...');
 		
 		IO.jsonp({
 			url : 'http://dannybeckett.co.uk/AviationBot/Weather.php',
@@ -24,7 +24,7 @@
 			del : 'NONE'
 		},
 	
-		description : 'testing',
+		description : 'Retrieves the METAR weather data for a specified ICAO airport - e.g. !!weather PHTO',
 		async : true
 	});
 
