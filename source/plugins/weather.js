@@ -3,7 +3,7 @@
 
 var weather = {
 	icao : function ( icao, cb ) {
-		IO.jsonp({
+		IO.xhr({
 			url : 'http://aviationweather.gov/adds/dataserver_current/httpparam',
 			jsonpName : 'callback',
 			data : {
