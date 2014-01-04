@@ -17,7 +17,11 @@
 		},
 
 		finishCb : function(data, cb) {
-			return bot.adapter.link(data.stationString, 'http://aviationweather.gov/adds/metars/?station_ids=' + data.stationString + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit') + ': ';
+			var ret = bot.adapter.link(data.stationString, 'http://aviationweather.gov/adds/metars/?station_ids=' + data.stationString + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit') + ': ';
+			
+			cb(ret);
+			
+			return ret;
 		}
 	};
 
