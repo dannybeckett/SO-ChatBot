@@ -12,12 +12,12 @@
 					stationString:	icao,
 					hoursBeforeNow:	'4'
 				},
-				complete: this.finishCb(cb)
+				complete: this.finishCb(data, cb)
 			});
 		},
 
-		finishCb : function(cb, x, y) {
-			return bot.adapter.link(data.stationString, 'http://aviationweather.gov/adds/metars/?station_ids=' + data.stationString + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit') + ': ' + x + y;
+		finishCb : function(data, cb) {
+			return bot.adapter.link(data.stationString, 'http://aviationweather.gov/adds/metars/?station_ids=' + data.stationString + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&submitmet=Submit') + ': ';
 		}
 	};
 
