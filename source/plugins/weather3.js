@@ -5,6 +5,7 @@
 		command: function(args, cb)
 		{
 			bot.log('hello');
+			args.reply('hello');
 			
 			IO.xhr({
 				url:		'/http://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&stationString=' + args + '&hoursBeforeNow=4',
@@ -16,11 +17,15 @@
 			{
 				if(xhr.status === 200)
 				{
+					if(cb)
+					{
+						cb('got a 200');
+					}
+					
+					args.reply('got a 200');
 					bot.log('got a 200');
 					return 'got a 200';
 				}
-
-				// cb('test');
 			}
 		}
 	};
