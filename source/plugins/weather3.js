@@ -17,22 +17,22 @@
 				if(xhr.status === 200)
 				{
 					bot.log('got a 200');
-					return;
+					return 'got a 200';
 				}
 
-				cb("test");
+				// cb('test');
 			}
 		}
 	};
 
 	bot.addCommand({
-		name:			'weather3',
+		name:		'weather3',
 		description:	'Retreives METAR data for a specified ICAO airport',
-		fun:			weather3.command,
-		async:			true,
+		fun:		weather3.command,
+		async:		true,
 		permissions:	{
-							use:	'ALL',
-							del:	'NONE'
-						}
+					use:	'ALL',
+					del:	'NONE'
+				}
 	});
 }());
