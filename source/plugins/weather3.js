@@ -15,12 +15,10 @@
 			{
 				if(xhr.status === 200)
 				{
-					args.reply('got a 200: ' + xhr.responseText);
+					
 				}
-				else
-				{
-					args.reply('got a ' + xhr.status)
-				}
+				
+				args.reply('got a ' + xhr.status + ': ' + xhr.responseText)
 			}
 		}
 	};
