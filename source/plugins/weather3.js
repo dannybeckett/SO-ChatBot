@@ -1,5 +1,5 @@
 (function(){
-	bot.stoplog = true;
+	// bot.stoplog = true;
 	
 	var weather3 = {
 		command: function(args, cb)
