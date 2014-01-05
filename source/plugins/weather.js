@@ -153,16 +153,35 @@ var weather = {
 				info = [],
 				sky,
 				gotmultipleClouds = data.sky_condition instanceof Array;
-				gotClouds = data.sky_condition.hasOwnProperty('@attributes');
+				gotSingleCloud = data.sky_condition.hasOwnProperty('@attributes');
+			
+			var getCloud = function(conditions)
+			{
+				var ret = convert.toClouds(conditions['@attributes'].sky_cover);
+				
+				if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
+				{
+					ret += ' @ ' + conditions['@attributes'].cloud_base_ft_agl.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'ft AGL';
+				}
+				
+				return ret;
+			}
 			
 			if(gotmultipleClouds)
 			{
-				sky = 'found ' + data.sky_condition.length + ' clouds';
+				var clouds = [];
+				
+				for(var i = 0; i < data.sky_condition.length; i++)
+				{
+					clouds.push(getCloud(data.sky_condition[i]));
+				}
+				
+				sky = clouds.join('; ');
 			}
 			
-			else if(gotClouds)
+			else if(gotSingleCloud)
 			{
-				sky = convert.toClouds(data.sky_condition['@attributes'].sky_cover);
+				sky = getCloud(data.sky_condition);
 			}
 			
 			else
@@ -177,7 +196,7 @@ var weather = {
 					'**Observed at:** '				+ data.observation_time,
 					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
 					'**Visibility:** '				+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)).toFixed(2) + 'km',
-					'**(not functional) Sky:** '	+ sky,
+					'**Sky:** '	+ sky,
 					'**Temperature:** '				+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)).toFixed() + '\u00B0F',
 					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)).toFixed() + '\u00B0F',
 					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb'
