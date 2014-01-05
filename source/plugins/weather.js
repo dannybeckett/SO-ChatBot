@@ -1,3 +1,9 @@
+/* To do:
+
+ * Human time for Observed at
+ * QC flags
+*/
+
 var convert = {
 	toFahrenheit: function(celcius)
 	{
