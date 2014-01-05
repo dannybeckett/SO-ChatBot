@@ -1,3 +1,5 @@
+// Not sure why GitHub previews the indents wrongly; they look fine on the Edit page
+
 var weather = {
 
 	descrip: 'Retrieves the METAR weather data for a specified ICAO airport - e.g. `!!weather KJFK` or `!!weather EGGP`',
