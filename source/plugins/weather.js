@@ -1,5 +1,93 @@
 var weather = {
 
+	compass: function(degrees)
+	{
+		if(degrees >= 0 && degrees <= 11.25)
+		{
+			return 'N';
+		}
+
+		else if(degrees > 11.25 && degrees <= 33.75)
+		{
+			return 'NNE';
+		}
+
+		else if(degrees > 33.75 && degrees <= 56.25)
+		{
+			return 'NE';
+		}
+
+		else if(degrees > 56.25 && degrees <= 78.75)
+		{
+			return 'ENE';
+		}
+
+		else if(degrees > 78.75 && degrees <= 101.25)
+		{
+			return 'E';
+		}
+
+		else if(degrees > 101.25 && degrees <= 123.75)
+		{
+			return 'ESE';
+		}
+
+		else if(degrees > 123.75 && degrees <= 146.25)
+		{
+			return 'SE';
+		}
+
+		else if(degrees > 146.25 && degrees <= 168.75)
+		{
+			return 'SSE';
+		}
+
+		else if(degrees > 168.75 && degrees <= 191.25)
+		{
+			return 'S';
+		}
+
+		else if(degrees > 191.25 && degrees <= 213.75)
+		{
+			return 'SSW';
+		}
+
+		else if(degrees > 213.75 && degrees <= 236.25)
+		{
+			return 'SW';
+		}
+
+		else if(degrees > 236.25 && degrees <= 258.75)
+		{
+			return 'WSW';
+		}
+
+		else if(degrees > 258.75 && degrees <= 281.25)
+		{
+			return 'W';
+		}
+
+		else if(degrees > 281.25 && degrees <= 303.75)
+		{
+			return 'WNW';
+		}
+
+		else if(degrees > 303.75 && degrees <= 326.25)
+		{
+			return 'NW';
+		}
+
+		else if(degrees > 326.25 && degrees <= 348.75)
+		{
+			return 'NNW';
+		}
+
+		else if(degrees > 348.75 && degrees <= 360)
+		{
+			return 'N';
+		}
+	},
+
 	metar: function(args, cb)
 	{
 		weather.command(args, cb, 'metar');
@@ -36,7 +124,27 @@ var weather = {
 				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you input the correct ICAO code.')
 			}
 			
-			args.directreply(mode + ' - ' + link + resp.data.METAR.raw_text.substring(4));
+			var data = resp.data.METAR,
+				info = [];
+			
+			if(mode === 'weather')
+			{
+				info = [
+					'**\u2022 Observed at:** '		+ data.observation_time,
+					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + weather.compass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
+					'**Visibility:** '				+ data.visibility_statute_mi + 'mi',
+					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb',
+					'**Temperature:** '				+ data.temp_c + '\u00B0C',
+					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C'
+				];
+			}
+			
+			var text = {
+				metar:		data.raw_text.substring(4),
+				weather:	info.join(' \u2022 ')
+			};
+			
+			args.directreply(link + ': ' + text[mode]);
 		}
 	}
 };
