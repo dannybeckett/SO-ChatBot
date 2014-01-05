@@ -1,6 +1,6 @@
 var weather = {
 
-	descrip: 'Retrieves the METAR weather data for a specified ICAO airport - e.g. `!!weather PHTO`',
+	descrip: 'Retrieves the METAR weather data for a specified ICAO airport - e.g. `!!weather KJFK` or `!!weather EGGP`',
 	
 	command: function(args, cb)
 	{
@@ -22,6 +22,11 @@ var weather = {
 	
 		function finish(resp)
 		{
+			if(!r.data['@attributes'].num_results)
+			{
+				args.directreply('No METAR data could be found within the last 24 hours for ' + icao + '! Check you input the correct ICAO code.')
+			}
+			
 			args.directreply(resp.data.METAR.raw_text);
 		}
 	}
