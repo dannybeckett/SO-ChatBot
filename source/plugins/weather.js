@@ -4,7 +4,8 @@ var weather = {
 	
 	command: function(args, cb)
 	{
-		var icao = args.toString();
+		var	icao = args.toString(),
+			link = bot.adapter.link(icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
 		
 		if(!icao)
 		{
@@ -24,7 +25,7 @@ var weather = {
 		{
 			if(resp.data['@attributes'].num_results === '0')
 			{
-				args.directreply('No METAR data could be found within the last 24 hours for ' + icao + '! Check you input the correct ICAO code.')
+				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you input the correct ICAO code.')
 			}
 			
 			args.directreply(resp.data.METAR.raw_text);
