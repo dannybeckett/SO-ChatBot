@@ -1,5 +1,28 @@
-var weather = {
-
+var convert = {
+	fahrenheit: function(celcius)
+	{
+		return celcius * 9 / 5 + 32;
+	},
+	
+	kilometres: function(miles)
+	{
+		return miles * 1.609344;
+	},
+	
+	clouds: function(abbreviation)
+	{
+		return {
+			SKC:	'Clear',
+			CLR:	'Clear',
+			CAVOK:	'Ceiling & visibility ok',
+			FEW:	'Few clouds',
+			SCT:	'Scattered clouds',
+			BKN:	'Broken clouds',
+			OVC:	'Overcast',
+			OVX:	'Obscured'
+		}[abbreviation];
+	},
+	
 	compass: function(degrees)
 	{
 		if(degrees >= 0 && degrees <= 11.25)
@@ -86,8 +109,10 @@ var weather = {
 		{
 			return 'N';
 		}
-	},
+	}
+};
 
+var weather = {
 	metar: function(args, cb)
 	{
 		weather.command(args, cb, 'metar');
@@ -130,12 +155,14 @@ var weather = {
 			if(mode === 'weather')
 			{
 				info = [
-					'**\u2022 Observed at:** '		+ data.observation_time,
-					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + weather.compass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
-					'**Visibility:** '				+ data.visibility_statute_mi + 'mi',
-					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb',
-					'**Temperature:** '				+ data.temp_c + '\u00B0C',
-					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C'
+													data.flight_category,
+					'**Observed at:** '				+ data.observation_time,
+					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + convert.compass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
+					'**Visibility:** '				+ data.visibility_statute_mi + 'mi/' + convert.kilometres(parseFloat(data.visibility_statute_mi)).toFixed(2) + 'km',
+					'**Sky:** '						+ convert.clouds(data.sky_condition.sky_cover),
+					'**Temperature:** '				+ data.temp_c + '\u00B0C/' + convert.fahrenheit(parseFloat(data.temp_c)).toFixed() + '\u00B0F',
+					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C/' + convert.fahrenheit(parseFloat(data.dewpoint_c)).toFixed() + '\u00B0F',
+					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb'
 				];
 			}
 			
@@ -144,7 +171,7 @@ var weather = {
 				weather:	info.join(' \u2022 ')
 			};
 			
-			args.directreply(link + ': ' + text[mode]);
+			args.directreply('**' + link + ':** ' + text[mode]);
 		}
 	}
 };
