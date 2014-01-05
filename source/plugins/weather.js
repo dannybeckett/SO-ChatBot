@@ -2,6 +2,8 @@
 
  * Human time for Observed at
  * QC flags
+ * -us, -uk, -eu
+
 */
 
 var convert = {
@@ -13,6 +15,12 @@ var convert = {
 	toKilometres: function(miles)
 	{
 		return miles * 1.609344;
+	},
+	
+	toCompass: function(degrees)
+	{
+		// http://codereview.stackexchange.com/questions/38613/is-there-a-better-way-to-get-a-compass-point-from-140-than-a-series-of-ifs
+		return ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW', 'N'][Math.round(degrees / 11.25 / 2)];
 	},
 	
 	toClouds: function(abbreviation)
@@ -27,16 +35,10 @@ var convert = {
 			OVC:	'Overcast',
 			OVX:	'Obscured'
 		}[abbreviation];
-	},
-	
-	toCompass: function(degrees)
-	{
-		// http://codereview.stackexchange.com/questions/38613/is-there-a-better-way-to-get-a-compass-point-from-140-than-a-series-of-ifs
-		return ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW', 'N'][Math.round(degrees / 11.25 / 2)];
 	}
-};
+},
 
-var weather = {
+weather = {
 	metar: function(args, cb)
 	{
 		weather.command(args, cb, 'metar');
