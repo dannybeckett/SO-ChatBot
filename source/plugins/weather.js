@@ -1,17 +1,25 @@
-// Not sure why GitHub previews the indents wrongly; they look fine on the Edit page
-
 var weather = {
 
-	descrip: 'Retrieves the METAR weather data for a specified ICAO airport - e.g. `!!weather KJFK` or `!!weather EGGP`',
-	
-	command: function(args, cb)
+	metar: function(args, cb)
 	{
+		weather.command(args, cb, 'metar');
+	},
+	
+	weather: function(args, cb)
+	{
+		weather.command(args, cb, 'weather');
+	},
+	
+	command: function(args, cb, mode)
+	{
+		args.directreply(mode + ' - ' args);
+		
 		var	icao = args.toString().toUpperCase(),
 			link = bot.adapter.link(icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
 		
 		if(!icao)
 		{
-			args.directreply(weather.descrip);
+			args.directreply('You must specify an ICAO airport code - e.g. `!!' + mode + ' KJFK` or `!!' + mode + ' EGGP`');
 		}
 		
 		IO.jsonp({
@@ -19,8 +27,8 @@ var weather = {
 			jsonpName:	'callback',
 			fun:		finish,
 			data:		{
-						a:	icao
-					}
+							a:	icao
+						}
 		});
 	
 		function finish(resp)
@@ -36,11 +44,21 @@ var weather = {
 };
 	
 bot.addCommand({
-	name:		'weather',
-	fun:		weather.command,
-	description:	weather.descrip,
-	async:		true,
+	name:			'weather',
+	fun:			weather.weather,
+	description:	'Retrieves the translated METAR weather data for a specified ICAO airport - e.g. `!!weather KJFK` or `!!weather EGGP`',
+	async:			true,
 	permissions:	{
-				del:	'NONE'
-			}
+						del:	'NONE'
+					}
+});
+
+bot.addCommand({
+	name:			'metar',
+	fun:			weather.metar,
+	description:	'Retrieves the standard METAR weather data for a specified ICAO airport - e.g. `!!metar KJFK` or `!!metar EGGP`',
+	async:			true,
+	permissions:	{
+						del:	'NONE'
+					}
 });
