@@ -22,7 +22,7 @@ var weather = {
 	
 		function finish(resp)
 		{
-			if(!r.data['@attributes'].num_results)
+			if(r.data['@attributes'].num_results === '0')
 			{
 				args.directreply('No METAR data could be found within the last 24 hours for ' + icao + '! Check you input the correct ICAO code.')
 			}
