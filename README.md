@@ -7,7 +7,7 @@ Ping me with ideas for new commands! Here are some that have been suggested:
 - Aerodrome data - airnav or worldaerodata.com
 - [Weather frequencies & phone numbers](https://www.faa.gov/air_traffic/weather/asos/)
 
-So far, using a 4-character ICAO code, you can try:
+So far, using a 4-character ICAO airport code, you can try:
 
 - `!!weather KJFK` to get English weather info
 - `!!metar KJFK` to get raw METAR data
