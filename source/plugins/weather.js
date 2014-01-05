@@ -12,8 +12,6 @@ var weather = {
 	
 	command: function(args, cb, mode)
 	{
-		args.directreply(mode + ' - ' args);
-		
 		var	icao = args.toString().toUpperCase(),
 			link = bot.adapter.link(icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
 		
@@ -38,7 +36,7 @@ var weather = {
 				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you input the correct ICAO code.')
 			}
 			
-			args.directreply(link + resp.data.METAR.raw_text.substring(4));
+			args.directreply(mode + ' - ' + link + resp.data.METAR.raw_text.substring(4));
 		}
 	}
 };
