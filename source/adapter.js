@@ -521,8 +521,7 @@ var output = bot.adapter.out = {
 			else if ( xhr.status !== 200 ) {
 				console.error( xhr );
 				output.add(
-					'Error ' + xhr.status + ' occured, I will call the maid ' +
-					' (@Zirak)' );
+					'An error occured - please try your request again, it should work this time! (Error #' + xhr.status + ' @DannyBeckett)' );
 			}
 			else {
 				output.total += 1;
