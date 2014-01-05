@@ -1,15 +1,15 @@
 var convert = {
-	fahrenheit: function(celcius)
+	toFahrenheit: function(celcius)
 	{
 		return celcius * 9 / 5 + 32;
 	},
 	
-	kilometres: function(miles)
+	toKilometres: function(miles)
 	{
 		return miles * 1.609344;
 	},
 	
-	clouds: function(abbreviation)
+	toClouds: function(abbreviation)
 	{
 		return {
 			SKC:	'Clear',
@@ -23,7 +23,7 @@ var convert = {
 		}[abbreviation];
 	},
 	
-	compass: function(degrees)
+	toCompass: function(degrees)
 	{
 		if(degrees >= 0 && degrees <= 11.25)
 		{
@@ -150,18 +150,36 @@ var weather = {
 			}
 			
 			var data = resp.data.METAR,
-				info = [];
+				info = [],
+				sky,
+				gotmultipleClouds = data.sky_condition instanceof Array;
+				gotClouds = data.sky_condition.hasOwnProperty('@attributes');
+			
+			if(gotmultipleClouds)
+			{
+				sky = 'found ' + data.sky_condition.length + ' clouds';
+			}
+			
+			else if(gotClouds)
+			{
+				sky = convert.toClouds(data.sky_condition['@attributes'].sky_cover);
+			}
+			
+			else
+			{
+				sky = 'Unavailable';
+			}
 			
 			if(mode === 'weather')
 			{
 				info = [
 													data.flight_category,
 					'**Observed at:** '				+ data.observation_time,
-					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + convert.compass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
-					'**Visibility:** '				+ data.visibility_statute_mi + 'mi/' + convert.kilometres(parseFloat(data.visibility_statute_mi)).toFixed(2) + 'km',
-					'**Sky:** '						+ convert.clouds(data.sky_condition.sky_cover),
-					'**Temperature:** '				+ data.temp_c + '\u00B0C/' + convert.fahrenheit(parseFloat(data.temp_c)).toFixed() + '\u00B0F',
-					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C/' + convert.fahrenheit(parseFloat(data.dewpoint_c)).toFixed() + '\u00B0F',
+					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
+					'**Visibility:** '				+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)).toFixed(2) + 'km',
+					'**(not functional) Sky:** '	+ sky,
+					'**Temperature:** '				+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)).toFixed() + '\u00B0F',
+					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)).toFixed() + '\u00B0F',
 					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb'
 				];
 			}
