@@ -196,7 +196,7 @@ var weather = {
 					'**Observed at:** '				+ data.observation_time,
 					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
 					'**Visibility:** '				+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)).toFixed(2) + 'km',
-					'**Sky:** '	+ sky,
+					'**Sky:** '						+ sky,
 					'**Temperature:** '				+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)).toFixed() + '\u00B0F',
 					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)).toFixed() + '\u00B0F',
 					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb'
