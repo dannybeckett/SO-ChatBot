@@ -1,4 +1,4 @@
-This is the bot that runs [Aviation chat](http://chat.stackexchange.com/rooms/12036/aviation) - for more info, ping [@DannyBeckett](http://aviation.stackexchange.com/users/97/danny-beckett).
+This is the bot that lives in [Aviation chat](http://chat.stackexchange.com/rooms/12036/aviation) - for more info, ping [@DannyBeckett](http://aviation.stackexchange.com/users/97/danny-beckett).
 
 I've deleted some commands that were specific to programming, or just unnecessary: `vendetta hangman firefly domain cowsay github zalgo jquery urban mdn colors awsm stop`
 
