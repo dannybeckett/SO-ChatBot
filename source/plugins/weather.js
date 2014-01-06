@@ -1,7 +1,6 @@
 /* To do:
 
  * QC flags
- * IATA codes
  * gusts don't work?
  * !!listcommands
  * airport/city name
