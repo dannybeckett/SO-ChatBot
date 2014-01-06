@@ -84,12 +84,12 @@ weather = {
 	
 	command: function(args, cb, mode)
 	{
-		var	icao = args.toString().toUpperCase(),
-			link = bot.adapter.link(icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
+		var	query = args.toString().toUpperCase();
 		
-		if(!icao)
+		if(!query || (query.length !== 3 && query.length !== 4))
 		{
-			args.directreply('You must specify an ICAO airport code - e.g. `!!' + mode + ' KJFK` or `!!' + mode + ' EGGP`');
+			args.directreply('You must specify a 3-letter IATA or 4-letter ICAO airport code - e.g. `!!' + mode + ' LPL` or `!!' + mode + ' KJFK`');
+			return;
 		}
 		
 		IO.jsonp({
@@ -97,15 +97,30 @@ weather = {
 			jsonpName:	'callback',
 			fun:		finish,
 			data:		{
-							a:	icao
+							a:	query
 						}
 		});
 	
 		function finish(resp)
 		{
+			// These errors are generated directly by Weather.php
+			if(resp.hasOwnProperty('error'))
+			{
+				var errors = {
+					'BadParams':	'Whoops, something went wrong! (@DannyBeckett)',
+					'NoICAO':		'No matching ICAO code could be found for the IATA code ' + query + '! Check you typed the correct 3-letter IATA code, or type its 4-letter ICAO code instead.'
+				};
+				
+				args.directreply(errors[resp.error]);
+				return;
+			}
+			
+			// Weather.php appends icao, regardless of whether an IATA code was input and no METAR data was found
+			var link = bot.adapter.link(resp.icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
+			
 			if(resp.data['@attributes'].num_results === '0')
 			{
-				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you input the correct ICAO code.')
+				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
 			}
 			
 			var data = resp.data.METAR,
@@ -175,7 +190,7 @@ weather = {
 bot.addCommand({
 	name:			'weather',
 	fun:			weather.weather,
-	description:	'Retrieves the translated METAR weather data for a specified ICAO airport - e.g. `!!weather KJFK` or `!!weather EGGP`',
+	description:	'Retrieves the translated METAR weather data for a specified 3-letter IATA or 4-letter ICAO airport code - e.g. `!!weather LPL` or `!!weather KJFK`',
 	async:			true,
 	permissions:	{
 						del:	'NONE'
@@ -185,7 +200,7 @@ bot.addCommand({
 bot.addCommand({
 	name:			'metar',
 	fun:			weather.metar,
-	description:	'Retrieves the standard METAR weather data for a specified ICAO airport - e.g. `!!metar KJFK` or `!!metar EGGP`',
+	description:	'Retrieves the standard METAR weather data for a specified 3-letter IATA or 4-letter ICAO airport code - e.g. `!!metar LPL` or `!!metar EGGP`',
 	async:			true,
 	permissions:	{
 						del:	'NONE'
