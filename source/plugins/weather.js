@@ -3,7 +3,6 @@
  * QC flags
  * IATA codes
  * gusts don't work?
- * clouds low to high
  * !!listcommands
  * airport/city name
 
@@ -63,40 +62,12 @@ var convert = {
 		var	milis	= Date.now() - Date.parse(iso8601),
 			seconds	= parseInt((milis / 1000).toFixed(), 10),
 			minutes	= parseInt((seconds / 60).toFixed(), 10),
-			hours	= parseInt((minutes / 60).toFixed(), 10),
-			str		= '';
+			hours	= parseInt((minutes / 60).toFixed(), 10);
 		
-		if(minutes > 59)
-		{
-			str += hours + ' hour';
-		
-			if(hours !== 1)
-			{
-				str += 's';
-			}
-		}
-	
-		else if(seconds > 59)
-		{
-			str += minutes + ' min';
-			
-			if(minutes !== 1)
-			{
-				str += 's';
-			}
-		}
-	
-		else if(seconds > 0)
-		{
-			str += seconds + ' sec';
-			
-			if(seconds !== 1)
-			{
-				str += 's';
-			}
-		}
-		
-		return str !== '' ? str + ' ago' : iso8601;
+		return	minutes > 59 ? hours   + ' hour' + (hours   === 1 ? '' : 's') + ' ago' :
+				seconds > 59 ? minutes + ' min'  + (minutes === 1 ? '' : 's') + ' ago' :
+				seconds > 0  ? seconds + ' sec'  + (seconds === 1 ? '' : 's') + ' ago' :
+				iso8601;
 	}
 },
 
@@ -149,7 +120,7 @@ weather = {
 				
 				if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
 				{
-					ret += ' @ ' + conditions['@attributes'].cloud_base_ft_agl.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'ft';
+					ret += ' @ ' + convert.formatNumber(conditions['@attributes'].cloud_base_ft_agl) + 'ft';
 				}
 				
 				return ret;
