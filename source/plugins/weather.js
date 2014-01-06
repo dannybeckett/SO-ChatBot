@@ -1,20 +1,30 @@
 /* To do:
 
- * Human time for Observed at
  * QC flags
- * -us, -uk, -eu
+ * IATA codes
+ * AGL
+ * gusts don't work?
+ * clouds low to high
+ * !!listcommands
+ * airport/city name
+ * add helper to readme
 
 */
 
 var convert = {
 	toFahrenheit: function(celcius)
 	{
-		return celcius * 9 / 5 + 32;
+		return (celcius * 9 / 5 + 32).toFixed();
 	},
 	
 	toKilometres: function(miles)
 	{
-		return miles * 1.609344;
+		return (miles * 1.609344).toFixed(2);
+	},
+	
+	toMillibars: function(inchesOfMercury)
+	{
+		return (inchesOfMercury * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	},
 	
 	toCompass: function(degrees)
@@ -35,7 +45,63 @@ var convert = {
 			OVC:	'Overcast',
 			OVX:	'Obscured'
 		}[abbreviation];
-	}
+	},
+	
+	toHumanTime: function(iso8601)
+    {
+        var	milis   = Date.now() - Date.parse(iso8601),
+            seconds = parseInt(milis / 1000, 10),
+            minutes = parseInt(seconds / 60, 10),
+            hours   = parseInt(minutes / 60, 10),
+            str     = '';
+        
+        if(hours > 0)
+        {
+            str += hours + ' hour';
+        
+            if(hours !== 1)
+            {
+                str += 's';
+            }
+            
+            minutes -= hours * 60;
+            seconds -= hours * 3600;
+        }
+    
+        if(minutes > 0)
+        {
+            if(str !== '')
+            {
+                str += ' ';
+            }
+            
+            str += minutes + ' min';
+            
+            if(minutes !== 1)
+            {
+                str += 's';
+            }
+            
+            seconds -= minutes * 60;
+        }
+    
+        if(seconds > 0 && hours === 0)
+        {
+            if(str !== '')
+            {
+                str += ' ';
+            }
+            
+            str += seconds + ' sec';
+            
+            if(seconds !== 1)
+            {
+                str += 's';
+            }
+        }
+
+        return str !== '' ? str + ' ago' : iso8601;
+    }
 },
 
 weather = {
@@ -118,14 +184,14 @@ weather = {
 			if(mode === 'weather')
 			{
 				info = [
-													data.flight_category,
-					'**Observed at:** '				+ data.observation_time,
-					'**Wind:** '					+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
-					'**Visibility:** '				+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)).toFixed(2) + 'km',
-					'**Sky:** '						+ sky,
-					'**Temperature:** '				+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)).toFixed() + '\u00B0F',
-					'**Dewpoint:** '				+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)).toFixed() + '\u00B0F',
-					'**Pressure (altimeter):** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + (parseFloat(data.altim_in_hg) * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'mb'
+										data.flight_category,
+					'**Observed:** '	+ convert.toHumanTime(data.observation_time),
+					'**Wind:** '		+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
+					'**Visibility:** '	+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km',
+					'**Sky:** '			+ sky,
+					'**Temperature:** '	+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F',
+					'**Dewpoint:** '	+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F',
+					'**Pressure:** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb'
 				];
 			}
 			
