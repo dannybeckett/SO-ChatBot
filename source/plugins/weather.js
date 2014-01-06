@@ -2,12 +2,17 @@
 
  * QC flags
  * IATA codes
- * AGL
  * gusts don't work?
  * clouds low to high
  * !!listcommands
  * airport/city name
- * add helper to readme
+
+*/
+
+/* Changes:
+
+ * Human time
+ * AGL
 
 */
 
@@ -54,60 +59,45 @@ var convert = {
 	},
 	
 	toHumanTime: function(iso8601)
-    {
-        var	milis   = Date.now() - Date.parse(iso8601),
-            seconds = parseInt(milis / 1000, 10),
-            minutes = parseInt(seconds / 60, 10),
-            hours   = parseInt(minutes / 60, 10),
-            str     = '';
-        
-        if(hours > 0)
-        {
-            str += hours + ' hour';
-        
-            if(hours !== 1)
-            {
-                str += 's';
-            }
-            
-            minutes -= hours * 60;
-            seconds -= hours * 3600;
-        }
-    
-        if(minutes > 0)
-        {
-            if(str !== '')
-            {
-                str += ' ';
-            }
-            
-            str += minutes + ' min';
-            
-            if(minutes !== 1)
-            {
-                str += 's';
-            }
-            
-            seconds -= minutes * 60;
-        }
-    
-        if(seconds > 0 && hours === 0)
-        {
-            if(str !== '')
-            {
-                str += ' ';
-            }
-            
-            str += seconds + ' sec';
-            
-            if(seconds !== 1)
-            {
-                str += 's';
-            }
-        }
-
-        return str !== '' ? str + ' ago' : iso8601;
-    }
+	{
+		var	milis	= Date.now() - Date.parse(iso8601),
+			seconds	= parseInt((milis / 1000).toFixed(), 10),
+			minutes	= parseInt((seconds / 60).toFixed(), 10),
+			hours	= parseInt((minutes / 60).toFixed(), 10),
+			str		= '';
+		
+		if(minutes > 59)
+		{
+			str += hours + ' hour';
+		
+			if(hours !== 1)
+			{
+				str += 's';
+			}
+		}
+	
+		else if(seconds > 59)
+		{
+			str += minutes + ' min';
+			
+			if(minutes !== 1)
+			{
+				str += 's';
+			}
+		}
+	
+		else if(seconds > 0)
+		{
+			str += seconds + ' sec';
+			
+			if(seconds !== 1)
+			{
+				str += 's';
+			}
+		}
+		
+		return str !== '' ? str + ' ago' : iso8601;
+	}
 },
 
 weather = {
@@ -159,7 +149,7 @@ weather = {
 				
 				if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
 				{
-					ret += ' @ ' + conditions['@attributes'].cloud_base_ft_agl.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'ft AGL';
+					ret += ' @ ' + conditions['@attributes'].cloud_base_ft_agl.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'ft';
 				}
 				
 				return ret;
@@ -194,7 +184,7 @@ weather = {
 					'**Observed:** '	+ convert.toHumanTime(data.observation_time),
 					'**Wind:** '		+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
 					'**Visibility:** '	+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km',
-					'**Sky:** '			+ sky,
+					'**Sky (AGL):** '	+ sky,
 					'**Temperature:** '	+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F',
 					'**Dewpoint:** '	+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F',
 					'**Pressure:** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb'
