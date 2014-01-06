@@ -29,7 +29,7 @@ var convert = {
 	
 	toKilometres: function(miles)
 	{
-		return (miles * 1.609344).toFixed(2);
+		return (miles * 1.609344).toFixed(2).toString().replace(/0$/, '');
 	},
 	
 	toMillibars: function(inchesOfMercury)
