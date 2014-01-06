@@ -13,3 +13,5 @@ So far, using a 4-character ICAO airport code, you can try:
 - `!!metar KJFK` to get raw METAR data
 
 You can check out the source code for the above commands at [./source/plugins/weather.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/weather.js)
+
+A couple of small PHP scripts ([../so-chatbot-php-helper](https://github.com/dannybeckett/so-chatbot-php-helper)) aid in converting XML to JSONP for use in JS.
