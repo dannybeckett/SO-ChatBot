@@ -12,6 +12,12 @@
 */
 
 var convert = {
+	formatNumber: function(integer)
+	{
+		// http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+		return integer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	},
+	
 	toFahrenheit: function(celcius)
 	{
 		return (celcius * 9 / 5 + 32).toFixed();
@@ -24,7 +30,7 @@ var convert = {
 	
 	toMillibars: function(inchesOfMercury)
 	{
-		return (inchesOfMercury * 33.86).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		return convert.formatNumber((inchesOfMercury * 33.86).toFixed());
 	},
 	
 	toCompass: function(degrees)
