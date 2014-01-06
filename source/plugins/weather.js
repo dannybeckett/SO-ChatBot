@@ -4,6 +4,7 @@
  * gusts don't work?
  * !!listcommands
  * airport/city name
+ * block so-chatbot-php-helper
 
 */
 
@@ -114,12 +115,13 @@ weather = {
 				return;
 			}
 			
-			// Weather.php appends icao, regardless of whether an IATA code was input and no METAR data was found
-			var link = bot.adapter.link(resp.icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
+			// Weather.php appends "our_airport" to the JSON
+			var link = bot.adapter.link(resp.our_airport.icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.our_airport.icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
 			
 			if(resp.data['@attributes'].num_results === '0')
 			{
-				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
+				args.directreply(resp.data['@attributes'].num_results);//'No METAR data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
+				return;
 			}
 			
 			var data = resp.data.METAR,
@@ -199,7 +201,7 @@ bot.addCommand({
 bot.addCommand({
 	name:			'metar',
 	fun:			weather.metar,
-	description:	'Retrieves the standard METAR weather data for a specified 3-letter IATA or 4-letter ICAO airport code - e.g. `!!metar LPL` or `!!metar EGGP`',
+	description:	'Retrieves the raw METAR weather data for a specified 3-letter IATA or 4-letter ICAO airport code - e.g. `!!metar LPL` or `!!metar KJFK`',
 	async:			true,
 	permissions:	{
 						del:	'NONE'
