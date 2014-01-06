@@ -1,6 +1,6 @@
 This is the bot that lives in [The Hangar](http://chat.stackexchange.com/rooms/12036/the-hangar) - for more info, ping [@DannyBeckett](http://aviation.stackexchange.com/users/97/danny-beckett).
 
-I've deleted some commands that were specific to programming, or just unnecessary: `awsm colors cowsay domain firefly github hangman jquery mdn mustache norris stop urban vendetta xkcd zalgo`
+I've deleted some commands that were specific to programming, or unnecessary: `awsm colors cowsay domain firefly github hangman jquery mdn mustache norris stop urban vendetta xkcd zalgo`
 
 Ping me with ideas for new commands! Here are some that have been suggested:
 
