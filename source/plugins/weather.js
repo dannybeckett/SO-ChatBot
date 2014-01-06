@@ -116,7 +116,8 @@ weather = {
 			}
 			
 			// Weather.php appends "our_airport" to the JSON
-			var link = bot.adapter.link(resp.our_airport.icao, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.our_airport.icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
+			var code = (resp.our_airport.hasOwnProperty('iata') ? resp.our_airport.iata + '/' : '') + resp.our_airport.icao,
+				link = bot.adapter.link(code, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.our_airport.icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
 			
 			if(resp.data['@attributes'].num_results === '0')
 			{
@@ -167,14 +168,14 @@ weather = {
 			if(mode === 'weather')
 			{
 				info = [
-										data.flight_category,
 					'**Observed:** '	+ convert.toHumanTime(data.observation_time),
 					'**Wind:** '		+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
 					'**Visibility:** '	+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km',
 					'**Sky (AGL):** '	+ sky,
 					'**Temperature:** '	+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F',
 					'**Dewpoint:** '	+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F',
-					'**Pressure:** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb'
+					'**Pressure:** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb',
+					'**Conditions:** '	+ data.flight_category
 				];
 			}
 			
@@ -183,7 +184,7 @@ weather = {
 				weather:	info.join(' \u2022 ')
 			};
 			
-			args.directreply('**' + link + ':** ' + text[mode]);
+			args.directreply('**' + link + ':** ' + resp.our_airport.name + ' \u2022 ' + text[mode]);
 		}
 	}
 };
