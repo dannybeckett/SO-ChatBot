@@ -19,3 +19,5 @@ A couple of small PHP scripts ([../so-chatbot-php-helper](https://github.com/dan
 I've also edited [./source/adapter.js](https://github.com/dannybeckett/SO-ChatBot/commit/d257d954f405f194670a24b59d781c974fffaf0e) to be slightly more helpful.
 
 I've deleted some commands that were specific to programming, or unnecessary: `awsm colors cowsay domain firefly github hangman jquery mdn mustache norris stop urban vendetta xkcd zalgo`
+
+I've also deleted the built-in `!!weather` command to make room for ours.
