@@ -15,13 +15,6 @@
 
 */
 
-/* Changes:
-
- * Human time
- * AGL
-
-*/
-
 var convert = {
 	formatNumber: function(integer)
 	{
