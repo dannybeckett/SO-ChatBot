@@ -1,10 +1,17 @@
+// GitHub shows bad indentation - open with Notepad++
+
 /* To do:
 
  * QC flags
- * gusts don't work?
+ * gusts don't work
  * !!listcommands
  * airport/city name
  * block so-chatbot-php-helper
+ * NaN pressure for SCEL/SCL
+ * char encoding
+ * use NOAA instead of FAA's ADDS for METARs... NOAA actually cares about all aerodromes
+ * move Airport.php & XMLToJSON.php to ./Classes
+ * switch parent room to main
 
 */
 
@@ -117,47 +124,56 @@ weather = {
 			
 			// Weather.php appends "our_airport" to the JSON
 			var code = (resp.our_airport.hasOwnProperty('iata') ? resp.our_airport.iata + '/' : '') + resp.our_airport.icao,
-				link = bot.adapter.link(code, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.our_airport.icao + '&std_trans=translated&chk_metars=on&hoursStr=most+recent+only&chk_tafs=on&submitmet=Submit');
+				link = bot.adapter.link(code, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.our_airport.icao + '&std_trans=translated&chk_metars=on&chk_tafs=on');
 			
 			if(resp.data['@attributes'].num_results === '0')
 			{
-				args.directreply(resp.data['@attributes'].num_results);//'No METAR data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
+				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
 				return;
 			}
 			
 			var data = resp.data.METAR,
 				info = [],
-				sky,
-				gotmultipleClouds = data.sky_condition instanceof Array;
-				gotSingleCloud = data.sky_condition.hasOwnProperty('@attributes');
+				sky;
 			
-			var getCloud = function(conditions)
+			if(data.hasOwnProperty('sky_condition'))
 			{
-				var ret = convert.toClouds(conditions['@attributes'].sky_cover);
-				
-				if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
+				var	gotmultipleClouds = data.sky_condition instanceof Array;
+					gotSingleCloud = data.sky_condition.hasOwnProperty('@attributes');
+			
+				var getCloud = function(conditions)
 				{
-					ret += ' @ ' + convert.formatNumber(conditions['@attributes'].cloud_base_ft_agl) + 'ft';
+					var ret = convert.toClouds(conditions['@attributes'].sky_cover);
+					
+					if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
+					{
+						ret += ' @ ' + convert.formatNumber(conditions['@attributes'].cloud_base_ft_agl) + 'ft';
+					}
+					
+					return ret;
 				}
 				
-				return ret;
-			}
-			
-			if(gotmultipleClouds)
-			{
-				var clouds = [];
-				
-				for(var i = 0; i < data.sky_condition.length; i++)
+				if(gotmultipleClouds)
 				{
-					clouds.push(getCloud(data.sky_condition[i]));
+					var clouds = [];
+					
+					for(var i = 0; i < data.sky_condition.length; i++)
+					{
+						clouds.push(getCloud(data.sky_condition[i]));
+					}
+					
+					sky = clouds.join('; ');
 				}
 				
-				sky = clouds.join('; ');
-			}
-			
-			else if(gotSingleCloud)
-			{
-				sky = getCloud(data.sky_condition);
+				else if(gotSingleCloud)
+				{
+					sky = getCloud(data.sky_condition);
+				}
+				
+				else
+				{
+					sky = 'Unavailable';
+				}
 			}
 			
 			else
@@ -175,16 +191,16 @@ weather = {
 					'**Temperature:** '	+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F',
 					'**Dewpoint:** '	+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F',
 					'**Pressure:** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb',
-					'**Conditions:** '	+ data.flight_category
+					'**Conditions:** '	+ (data.flight_category || 'Unavailable')
 				];
 			}
 			
-			var text = {
-				metar:		data.raw_text.substring(4),
-				weather:	info.join(' \u2022 ')
+			var	text = {
+				metar:		data.metar_type + ' ' + data.raw_text,
+				weather:	resp.our_airport.name + ' \u2022 ' + info.join(' \u2022 ')
 			};
 			
-			args.directreply('**' + link + ':** ' + resp.our_airport.name + ' \u2022 ' + text[mode]);
+			args.directreply('**' + link + ':** ' + text[mode]);
 		}
 	}
 };
