@@ -3,15 +3,14 @@
 /* To do:
 
  * QC flags
- * gusts don't work
+ * gusts
  * !!listcommands
- * airport/city name
  * block so-chatbot-php-helper
- * NaN pressure for SCEL/SCL
- * char encoding
  * use NOAA instead of FAA's ADDS for METARs... NOAA actually cares about all aerodromes
- * move Airport.php & XMLToJSON.php to ./Classes
- * switch parent room to main
+ * parent room
+ * !!help
+ * our_airport -> airport
+ * split >500
 
 */
 
@@ -49,9 +48,9 @@ var convert = {
 			SKC:	'Clear',
 			CLR:	'Clear',
 			CAVOK:	'Ceiling & visibility ok',
-			FEW:	'Few clouds',
-			SCT:	'Scattered clouds',
-			BKN:	'Broken clouds',
+			FEW:	'Few',
+			SCT:	'Scattered',
+			BKN:	'Broken',
 			OVC:	'Overcast',
 			OVX:	'Obscured'
 		}[abbreviation];
@@ -117,7 +116,7 @@ weather = {
 			
 			// Weather.php appends "our_airport" to the JSON
 			var code = (resp.our_airport.hasOwnProperty('iata') ? resp.our_airport.iata + '/' : '') + resp.our_airport.icao,
-				link = bot.adapter.link(code, 'http://aviationweather.gov/adds/metars/?station_ids=' + resp.our_airport.icao + '&std_trans=translated&chk_metars=on&chk_tafs=on');
+				link = bot.adapter.link(code, resp.our_airport.link);
 			
 			if(resp.data['@attributes'].num_results === '0')
 			{
@@ -177,13 +176,13 @@ weather = {
 			if(mode === 'weather')
 			{
 				info = [
-					'**Observed:** '	+ convert.toHumanTime(data.observation_time),
-					'**Wind:** '		+ data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts',
-					'**Visibility:** '	+ data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km',
-					'**Sky (AGL):** '	+ sky,
-					'**Temperature:** '	+ data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F',
-					'**Dewpoint:** '	+ data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F',
-					'**Pressure:** '	+ parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb',
+					'**Observed:** '	+ (data.observation_time ? convert.toHumanTime(data.observation_time) : 'Unavailable'),
+					'**Wind:** '		+ (data.wind_dir_degrees && data.wind_speed_kt ? data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts' : 'Unavailable'),
+					'**Visibility:** '	+ (data.visibility_statute_mi ? data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km' : 'Unavailable'),
+					'**Clouds:** '		+ sky,
+					'**Temperature:** '	+ (data.temp_c ? data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F' : 'Unavailable'),
+					'**Dewpoint:** '	+ (data.dewpoint_c ? data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F' : 'Unavailable'),
+					'**Pressure:** '	+ (data.altim_in_hg ? parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb' : 'Unavailable'),
 					'**Conditions:** '	+ (data.flight_category || 'Unavailable')
 				];
 			}
@@ -193,7 +192,10 @@ weather = {
 				weather:	resp.our_airport.name + ' \u2022 ' + info.join(' \u2022 ')
 			};
 			
-			args.directreply('**' + link + ':** ' + text[mode]);
+			var	output = '**' + link + ':** ' + text[mode],
+				length = ':1234567890 '.length + output.length;
+			
+			args.directreply(length < 500 ? output : 'Sorry, the weather report retreived exceeded the maximum allowed length - try `!!metar ' + query + '` instead (CC: @DannyBeckett)');
 		}
 	}
 };
