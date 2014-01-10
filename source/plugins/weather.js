@@ -3,14 +3,16 @@
 /* To do:
 
  * QC flags
- * gusts
- * !!listcommands
- * block so-chatbot-php-helper
  * use NOAA instead of FAA's ADDS for METARs... NOAA actually cares about all aerodromes
+ * split >500
+ * search by city/name
+ 
+ Unrelated:
+ 
+ * !!listcommands
  * parent room
  * !!help
- * our_airport -> airport
- * split >500
+ * whitelist so-chatbot-php-helper
 
 */
 
@@ -71,14 +73,19 @@ var convert = {
 },
 
 weather = {
+	weather: function(args, cb)
+	{
+		weather.command(args, cb, 'weather');
+	},
+	
 	metar: function(args, cb)
 	{
 		weather.command(args, cb, 'metar');
 	},
 	
-	weather: function(args, cb)
+	taf: function(args, cb)
 	{
-		weather.command(args, cb, 'weather');
+		weather.command(args, cb, 'taf');
 	},
 	
 	command: function(args, cb, mode)
@@ -96,7 +103,8 @@ weather = {
 			jsonpName:	'callback',
 			fun:		finish,
 			data:		{
-							a:	query
+							a:	query,
+							m:	mode.replace('weather', 'metar') + 's'
 						}
 		});
 	
@@ -114,17 +122,17 @@ weather = {
 				return;
 			}
 			
-			// Weather.php appends "our_airport" to the JSON
-			var code = (resp.our_airport.hasOwnProperty('iata') ? resp.our_airport.iata + '/' : '') + resp.our_airport.icao,
-				link = bot.adapter.link(code, resp.our_airport.link);
+			// Weather.php appends "airport" to the JSON
+			var code = (resp.airport.hasOwnProperty('iata') ? resp.airport.iata + '/' : '') + resp.airport.icao,
+				link = bot.adapter.link(code, resp.airport[mode.replace('weather', 'metar')]);
 			
 			if(resp.data['@attributes'].num_results === '0')
 			{
-				args.directreply('No METAR data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
+				args.directreply('No data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
 				return;
 			}
 			
-			var data = resp.data.METAR,
+			var data = resp.data.METAR || resp.data.TAF,
 				info = [],
 				sky;
 			
@@ -164,32 +172,33 @@ weather = {
 				
 				else
 				{
-					sky = 'Unavailable';
+					sky = 'Missing';
 				}
 			}
 			
 			else
 			{
-				sky = 'Unavailable';
+				sky = 'Missing';
 			}
 			
 			if(mode === 'weather')
 			{
 				info = [
-					'**Observed:** '	+ (data.observation_time ? convert.toHumanTime(data.observation_time) : 'Unavailable'),
-					'**Wind:** '		+ (data.wind_dir_degrees && data.wind_speed_kt ? data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts' : 'Unavailable'),
-					'**Visibility:** '	+ (data.visibility_statute_mi ? data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km' : 'Unavailable'),
+					'**Observed:** '	+ (data.observation_time ? convert.toHumanTime(data.observation_time) : 'Missing'),
+					'**Wind:** '		+ (data.wind_dir_degrees && data.wind_speed_kt ? data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts' + (data.wind_gust_kt ? '; gusts @ ' + data.wind_gust_kt + 'kts' : '') : 'Missing'),
+					'**Visibility:** '	+ (data.visibility_statute_mi ? data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km' : 'Missing'),
 					'**Clouds:** '		+ sky,
-					'**Temperature:** '	+ (data.temp_c ? data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F' : 'Unavailable'),
-					'**Dewpoint:** '	+ (data.dewpoint_c ? data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F' : 'Unavailable'),
-					'**Pressure:** '	+ (data.altim_in_hg ? parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb' : 'Unavailable'),
-					'**Conditions:** '	+ (data.flight_category || 'Unavailable')
+					'**Temperature:** '	+ (data.temp_c ? data.temp_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.temp_c)) + '\u00B0F' : 'Missing'),
+					'**Dewpoint:** '	+ (data.dewpoint_c ? data.dewpoint_c + '\u00B0C/' + convert.toFahrenheit(parseFloat(data.dewpoint_c)) + '\u00B0F' : 'Missing'),
+					'**Pressure:** '	+ (data.altim_in_hg ? parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb' : 'Missing'),
+					'**Conditions:** '	+ (data.flight_category || 'Missing')
 				];
 			}
 			
 			var	text = {
+				weather:	resp.airport.name + ' \u2022 ' + info.join(' \u2022 '),
 				metar:		data.metar_type + ' ' + data.raw_text,
-				weather:	resp.our_airport.name + ' \u2022 ' + info.join(' \u2022 ')
+				taf:		data.raw_text
 			};
 			
 			var	output = '**' + link + ':** ' + text[mode],
@@ -214,6 +223,16 @@ bot.addCommand({
 	name:			'metar',
 	fun:			weather.metar,
 	description:	'Retrieves the raw METAR weather data for a specified 3-letter IATA or 4-letter ICAO airport code - e.g. `!!metar LPL` or `!!metar KJFK`',
+	async:			true,
+	permissions:	{
+						del:	'NONE'
+					}
+});
+
+bot.addCommand({
+	name:			'taf',
+	fun:			weather.taf,
+	description:	'Retrieves the raw TAF weather data for a specified 3-letter IATA or 4-letter ICAO airport code - e.g. `!!taf LPL` or `!!taf KJFK`',
 	async:			true,
 	permissions:	{
 						del:	'NONE'
