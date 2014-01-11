@@ -47,14 +47,17 @@ var convert = {
 	toClouds: function(abbreviation)
 	{
 		return {
+			NSC:	'No significant',
 			SKC:	'Clear',
 			CLR:	'Clear',
 			CAVOK:	'Ceiling & visibility ok',
 			FEW:	'Few',
 			SCT:	'Scattered',
+			SKT:	'Scattered',
 			BKN:	'Broken',
 			OVC:	'Overcast',
-			OVX:	'Obscured'
+			OVX:	'Obscured',
+			OVCX:	'Overcast/obscured'
 		}[abbreviation];
 	},
 	
@@ -115,6 +118,7 @@ weather = {
 			{
 				var errors = {
 					'BadParams':	'Whoops, something went wrong! (@DannyBeckett)',
+					'NoConvert':	'Sorry, http://ourairports.com is currently down; this means the 3-letter IATA code you entered cannot be converted to the required 4-letter ICAO code. Type its 4-letter ICAO code instead.',
 					'NoICAO':		'No matching ICAO code could be found for the IATA code ' + query + '! Check you typed the correct 3-letter IATA code, or type its 4-letter ICAO code instead.'
 				};
 				
@@ -195,16 +199,22 @@ weather = {
 				];
 			}
 			
+			else if(mode === 'taf')
+			{
+				info = data.raw_text.split(/ (?=FM|BECMG|TEMPO)/gi);
+			}
+			
 			var	text = {
-				weather:	resp.airport.name + ' \u2022 ' + info.join(' \u2022 '),
-				metar:		data.metar_type + ' ' + data.raw_text,
-				taf:		data.raw_text
+				weather:	'**' + link + ':** ' + resp.airport.name + ' \u2022 ' + info.join(' \u2022 '),
+				metar:		'    ' + data.metar_type + ' ' + data.raw_text,
+				taf:		'    ' + info.join('\r\n    ')
 			};
 			
-			var	output = '**' + link + ':** ' + text[mode],
-				length = ':1234567890 '.length + output.length;
+			var	output = text[mode],
+				length = /*':1234567890 '.length +*/ output.length;
+						// Used for args.directreply()
 			
-			args.directreply(length < 500 ? output : 'Sorry, the weather report retreived exceeded the maximum allowed length - try `!!metar ' + query + '` instead (CC: @DannyBeckett)');
+			args.send(length < 500 ? output : 'Sorry, the weather report retreived exceeded the maximum allowed length - try `!!metar ' + query + '` instead (CC: @DannyBeckett)');
 		}
 	}
 };
