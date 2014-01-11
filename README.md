@@ -5,10 +5,11 @@ Ping me with ideas for new commands! Here are some that have been suggested:
 - Aerodrome data - airnav or worldaerodata.com
 - [Weather frequencies & phone numbers](https://www.faa.gov/air_traffic/weather/asos/)
 
-So far, using a 4-character ICAO airport code, you can try:
+So far, using a 3-letter IATA or 4-letter ICAO airport code, you can try:
 
-- `!!weather KJFK` to get English weather info
-- `!!metar KJFK` to get raw METAR data
+- `!!weather KJFK` to get English weather info for New York JFK airport
+- `!!metar LPL` to get raw METAR data for Liverpool John Lennon airport
+- `!!taf AMS` to get raw TAF data for Amsterdam Schiphol airport
 
 ---
 
