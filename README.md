@@ -11,9 +11,13 @@ So far, using a 3-letter IATA or 4-letter ICAO airport code, you can try:
 - `!!metar LPL` to get raw METAR data for Liverpool John Lennon airport
 - `!!taf AMS` to get raw TAF data for Amsterdam Schiphol airport
 
+You can also try:
+
+- `!!TeachMeToFly`
+
 ---
 
-You can check out the source code for the above commands at [./source/plugins/weather.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/weather.js)
+You can check out the source code for the above commands at [./source/plugins/weather.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/weather.js) and [./source/plugins/teachmetofly.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/teachmetofly.js)
 
 A couple of small PHP scripts ([../so-chatbot-php-helper](https://github.com/dannybeckett/so-chatbot-php-helper)) aid in converting XML to JSONP for use in JS.
 
