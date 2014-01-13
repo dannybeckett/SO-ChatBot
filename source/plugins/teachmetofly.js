@@ -1,6 +1,10 @@
 // GitHub shows bad indentation - open with Notepad++
 
 var teachmetofly = {
+
+	// Do NOT change the order of these - that means no adding in the middle, or deleting!
+	// This way, !!TeachMeToFly 42 will always link to the same lesson
+	
 	tidbits: [
 		"Don't forget to lower the landing gear before landing!",
 		"Keep the shiny side up!",
@@ -43,21 +47,49 @@ var teachmetofly = {
 		"It is always better to be on the ground wishing you were up in the air, than up in the air wishing you were on the ground!",
 		'"We\'re not happy until you\'re not happy" - Motto of the FAA',
 		"Pilots talk about women when flying, and flying when with women.",
-		"Some pilots will declare an emergency for high oil pressure. Others, upon losing a wing, will ask for a lower altitude."
+		"Some pilots will declare an emergency for high oil pressure. Others, upon losing a wing, will ask for a lower altitude.",
+		"In order to be legal, the weight of the paperwork must equal the weight of the aircraft."
 	],
 	
 	command: function(args, cb)
 	{
-		var random = Math.floor(Math.random() * teachmetofly.tidbits.length);
+		var	total = teachmetofly.tidbits.length,
+			lesson,
+			output;
 		
-		args.send('**Lesson #' + (random + 1) + '**: ' + teachmetofly.tidbits[random]);
+		if(args.toString().length > 0)
+		{
+			var selected = parseInt(args, 10);
+			
+			if(selected >= 1 && selected <= total)
+			{
+				lesson = selected;
+				output = selected - 1;
+			}
+			
+			else
+			{
+				args.directreply('You must choose a number between 1 - ' + total + ' (or omit the number entirely).');
+				return;
+			}
+		}
+		
+		else
+		{
+			var random = Math.floor(Math.random() * total);
+			
+			lesson = random + 1;
+			output = random;
+		}
+		
+		args.send('**Lesson #' + lesson + '**: ' + teachmetofly.tidbits[output]);
 	}
 };
 	
 bot.addCommand({
 	name:			'teachmetofly',
 	fun:			teachmetofly.command,
-	description:	'Retrieves a random tip!',
+	description:	'Retrieves a random tip, or a specific lesson!',
 	async:			false,
 	permissions:	{
 						del:	'NONE'
