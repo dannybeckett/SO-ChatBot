@@ -95,3 +95,13 @@ bot.addCommand({
 						del:	'NONE'
 					}
 });
+
+bot.addCommand({
+	name:			'lesson',
+	fun:			teachmetofly.command,
+	description:	'Retrieves a random tip, or a specific lesson!',
+	async:			false,
+	permissions:	{
+						del:	'NONE'
+					}
+});
