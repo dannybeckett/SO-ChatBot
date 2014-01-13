@@ -1,3 +1,5 @@
+// GitHub shows bad indentation - open with Notepad++
+
 var teachmetofly = {
 	tidbits: [
 		"Don't forget to lower the landing gear before landing!",
