@@ -61,17 +61,14 @@ var teachmetofly = {
 		{
 			var selected = parseInt(args, 10);
 			
-			if(selected >= 1 && selected <= total)
-			{
-				lesson = selected;
-				output = selected - 1;
-			}
-			
-			else
+			if(isNaN(selected) || selected < 1 || selected > total)
 			{
 				args.directreply('You must choose a number between 1 - ' + total + ' (or omit the number entirely).');
 				return;
 			}
+			
+			lesson = selected;
+			output = selected - 1;
 		}
 		
 		else
