@@ -15,9 +15,7 @@ var commands = {
 			return args + ': ' + desc;
 		}
 
-		return 'Information on interacting with me can be found at ' +
-			'[this page](https://github.com/Zirak/SO-ChatBot/' +
-			'wiki/Interacting-with-the-bot)';
+		return 'Information on interacting with me can be found at [this page](https://github.com/dannybeckett/SO-ChatBot/blob/master/README.md)';
 	},
 
 	listen : function ( msg ) {
