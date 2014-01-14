@@ -1,21 +1,5 @@
 // GitHub shows bad indentation - open with Notepad++
 
-/* To do:
-
- * QC flags
- * use NOAA instead of FAA's ADDS for METARs... NOAA actually cares about all aerodromes
- * split >500
- * search by city/name
- 
- Unrelated:
- 
- * !!listcommands
- * parent room
- * !!help
- * whitelist so-chatbot-php-helper
-
-*/
-
 var convert = {
 	formatNumber: function(integer)
 	{
@@ -101,13 +85,20 @@ weather = {
 			return;
 		}
 		
+		var sources = {
+			'weather':	'adds',
+			'metar':	'noaa',
+			'taf':		'noaa'
+		};
+		
 		IO.jsonp({
 			url:		'http://dannybeckett.co.uk/AviationBot/Weather.php',
 			jsonpName:	'callback',
 			fun:		finish,
 			data:		{
 							a:	query,
-							m:	mode.replace('weather', 'metar') + 's'
+							m:	mode.replace('weather', 'metar') + 's',
+							s:	sources[mode]
 						}
 		});
 	
@@ -118,7 +109,9 @@ weather = {
 			{
 				var errors = {
 					'BadParams':	'Whoops, something went wrong! (@DannyBeckett)',
-					'NoConvert':	'Sorry, http://ourairports.com is currently down; this means the 3-letter IATA code you entered cannot be converted to the required 4-letter ICAO code. Type its 4-letter ICAO code instead.',
+					'NoAirport':	'Sorry, http://ourairports.com is currently down; this means the 3-letter IATA code you entered cannot be converted to the required 4-letter ICAO code. Type its 4-letter ICAO code instead.',
+					'NoWeather':	'Sorry, http://aviationweather.gov is currently down; weather reports cannot currently be retrieved.',
+					'NoFile':		'No data could be found for ' + query + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.',
 					'NoICAO':		'No matching ICAO code could be found for the IATA code ' + query + '! Check you typed the correct 3-letter IATA code, or type its 4-letter ICAO code instead.'
 				};
 				
@@ -126,68 +119,69 @@ weather = {
 				return;
 			}
 			
-			// Weather.php appends "airport" to the JSON
-			var code = (resp.airport.hasOwnProperty('iata') ? resp.airport.iata + '/' : '') + resp.airport.icao,
-				link = bot.adapter.link(code, resp.airport[mode.replace('weather', 'metar')]);
+			var output;
 			
-			if(resp.data['@attributes'].num_results === '0')
+			if(mode === 'weather')
 			{
-				args.directreply('No data could be found within the last 24 hours for ' + link + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.')
-				return;
-			}
-			
-			var data = resp.data.METAR || resp.data.TAF,
-				info = [],
-				sky;
-			
-			if(data.hasOwnProperty('sky_condition'))
-			{
-				var	gotmultipleClouds = data.sky_condition instanceof Array;
-					gotSingleCloud = data.sky_condition.hasOwnProperty('@attributes');
-			
-				var getCloud = function(conditions)
+				// Weather.php appends "airport" to the JSON
+				var code = (resp.airport.hasOwnProperty('iata') ? resp.airport.iata + '/' : '') + resp.airport.icao,
+					link = bot.adapter.link(code, resp.airport[mode.replace('weather', 'metar')]);
+				
+				if(resp.data['@attributes'].num_results === '0')
 				{
-					var ret = convert.toClouds(conditions['@attributes'].sky_cover);
-					
-					if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
-					{
-						ret += ' @ ' + convert.formatNumber(conditions['@attributes'].cloud_base_ft_agl) + 'ft';
-					}
-					
-					return ret;
+					args.directreply('No data could be found within the last 24 hours for ' + link + '! Try `!!metar ' + query + '` or check you typed the correct 3-letter IATA or 4-letter ICAO airport code.');
+					return;
 				}
 				
-				if(gotmultipleClouds)
+				var data = resp.data.METAR || resp.data.TAF,
+					sky;
+				
+				if(data.hasOwnProperty('sky_condition'))
 				{
-					var clouds = [];
-					
-					for(var i = 0; i < data.sky_condition.length; i++)
+					var	gotmultipleClouds = data.sky_condition instanceof Array;
+						gotSingleCloud = data.sky_condition.hasOwnProperty('@attributes');
+				
+					var getCloud = function(conditions)
 					{
-						clouds.push(getCloud(data.sky_condition[i]));
+						var ret = convert.toClouds(conditions['@attributes'].sky_cover);
+						
+						if(conditions['@attributes'].hasOwnProperty('cloud_base_ft_agl'))
+						{
+							ret += ' @ ' + convert.formatNumber(conditions['@attributes'].cloud_base_ft_agl) + 'ft';
+						}
+						
+						return ret;
 					}
 					
-					sky = clouds.join('; ');
-				}
-				
-				else if(gotSingleCloud)
-				{
-					sky = getCloud(data.sky_condition);
+					if(gotmultipleClouds)
+					{
+						var clouds = [];
+						
+						for(var i = 0; i < data.sky_condition.length; i++)
+						{
+							clouds.push(getCloud(data.sky_condition[i]));
+						}
+						
+						sky = clouds.join('; ');
+					}
+					
+					else if(gotSingleCloud)
+					{
+						sky = getCloud(data.sky_condition);
+					}
+					
+					else
+					{
+						sky = 'Missing';
+					}
 				}
 				
 				else
 				{
 					sky = 'Missing';
 				}
-			}
-			
-			else
-			{
-				sky = 'Missing';
-			}
-			
-			if(mode === 'weather')
-			{
-				info = [
+				
+				var info = [
 					'**Observed:** '	+ (data.observation_time ? convert.toHumanTime(data.observation_time) : 'Missing'),
 					'**Wind:** '		+ (data.wind_dir_degrees && data.wind_speed_kt ? data.wind_dir_degrees + '\u00B0/' + convert.toCompass(parseInt(data.wind_dir_degrees), 10) + ' @ ' + data.wind_speed_kt + 'kts' + (data.wind_gust_kt ? '; gusts @ ' + data.wind_gust_kt + 'kts' : '') : 'Missing'),
 					'**Visibility:** '	+ (data.visibility_statute_mi ? data.visibility_statute_mi + 'mi/' + convert.toKilometres(parseFloat(data.visibility_statute_mi)) + 'km' : 'Missing'),
@@ -197,24 +191,28 @@ weather = {
 					'**Pressure:** '	+ (data.altim_in_hg ? parseFloat(data.altim_in_hg).toFixed(2) + '" Hg/' + convert.toMillibars(parseFloat(data.altim_in_hg)) + 'mb' : 'Missing'),
 					'**Conditions:** '	+ (data.flight_category || 'Missing')
 				];
+				
+				output = '**' + link + ':** ' + resp.airport.name + ' \u2022 ' + info.join(' \u2022 ');
 			}
 			
-			else if(mode === 'taf')
+			// mode !== 'weather'
+			else
 			{
-				info = data.raw_text.split(/ (?=FM|BECMG|TEMPO)/gi);
+				output = resp.raw_text;
 			}
 			
-			var	text = {
-				weather:	'**' + link + ':** ' + resp.airport.name + ' \u2022 ' + info.join(' \u2022 '),
-				metar:		'    ' + data.metar_type + ' ' + data.raw_text,
-				taf:		'    ' + info.join('\r\n    ')
-			};
-			
-			var	output = text[mode],
-				length = /*':1234567890 '.length +*/ output.length;
+			var	length = /*':1234567890 '.length +*/ output.length;
 						// Used for args.directreply()
 			
-			args.send(length < 500 ? output : 'Sorry, the weather report retreived exceeded the maximum allowed length - try `!!metar ' + query + '` instead (CC: @DannyBeckett)');
+			if(length < 500)
+			{
+				args.send(output);
+			}
+			
+			else
+			{
+				args.directreply('Sorry, the weather report retreived exceeded the maximum allowed length - try `!!metar ' + query + '` instead (CC: @DannyBeckett)');
+			}
 		}
 	}
 };
