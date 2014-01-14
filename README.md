@@ -1,3 +1,6 @@
+Help
+---
+
 This is the bot that lives in [The Hangar](http://chat.stackexchange.com/rooms/12036/the-hangar) - for more info, ping [@DannyBeckett](http://aviation.stackexchange.com/users/97/danny-beckett).
 
 Leave an answer [here](http://meta.aviation.stackexchange.com/questions/156/what-would-you-like-the-chat-bot-to-do) with ideas for new commands! Here are some that have been suggested:
