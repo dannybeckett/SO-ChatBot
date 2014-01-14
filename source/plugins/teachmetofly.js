@@ -2,8 +2,8 @@
 
 var teachmetofly = {
 
-	// Do NOT change the order of these - that means no adding in the middle, or deleting!
-	// This way, !!TeachMeToFly 42 will always link to the same lesson
+	// Do NOT change the order of these! That means no adding in the middle, reordering,
+	// or deleting.  This way, !!TeachMeToFly 42 will always link to the same lesson.
 	
 	tidbits: [
 		"Don't forget to lower the landing gear before landing!",
@@ -19,7 +19,7 @@ var teachmetofly = {
 		"Takeoffs are optional. Landings are mandatory.",
 		"To land: Airspeed, Centerline, PAPI *(repeat)*",
 		"The propeller is just a giant fan to keep the pilot cool; if it stops, the pilot starts sweating!",
-		"With a mile of road, a car can go a mile; with a mile of track, a train can go a mile; with a mile of river, a boat can go a mile; But with a mile of runway, an airplane can go *anywhere*!",
+		"With a mile of road, a car can go a mile; with a mile of track, a train can go a mile; with a mile of river, a boat can go a mile; With a mile of runway, an airplane can go *anywhere*!",
 		"A super cub is the safest airplane.  It can just barely kill you.",
 		"The only things an FO should say on his first day are V1, gear up, and I'll take the fat one.",
 		"What's the difference between a fighter pilot and his aircraft? The plane stops whining when you shut down the engines.",
@@ -48,7 +48,15 @@ var teachmetofly = {
 		'"We\'re not happy until you\'re not happy" - Motto of the FAA',
 		"Pilots talk about women when flying, and flying when with women.",
 		"Some pilots will declare an emergency for high oil pressure. Others, upon losing a wing, will ask for a lower altitude.",
-		"In order to be legal, the weight of the paperwork must equal the weight of the aircraft."
+		"In order to be legal, the weight of the paperwork must equal the weight of the aircraft.",
+		"The insurance company owns the airplane.",
+		"You start with a bag full of luck and an empty bag of experience. The trick is to fill the bag of experience before you empty the bag of luck.",
+		"Learn from the mistakes of others. You won't live long enough to make all of them yourself.",
+		"Any landing that you can walk away from is a good one!",
+		"A good landing is any landing you can walk away from. A great landing is one where they can re-use the plane.",
+		"When landing engine-out at night, if you don't like what you see as you are about to land, just turn off the landing light.",
+		"Power. Ailerons. Rudder. Elevator. Memorize it. It might just save your life someday.",
+		"Just because it has 4 seats doesn't mean you can put 4 people into it."
 	],
 	
 	command: function(args, cb)
