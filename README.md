@@ -21,7 +21,7 @@ You can check out the source code for the above commands at [./source/plugins/we
 
 A couple of small PHP scripts ([../so-chatbot-php-helper](https://github.com/dannybeckett/so-chatbot-php-helper)) aid in converting XML to JSONP for use in JS.
 
-I've also edited [./source/adapter.js](https://github.com/dannybeckett/SO-ChatBot/commit/d257d954f405f194670a24b59d781c974fffaf0e) to be slightly more helpful.
+I've edited [./source/adapter.js](https://github.com/dannybeckett/SO-ChatBot/commit/d257d954f405f194670a24b59d781c974fffaf0e) to be slightly more helpful, and I've edited ./source/commands.js](https://github.com/dannybeckett/SO-ChatBot/commit/1be29071f7ec136ceba9a2b139efc68e43962ab5) to point `!!help` to our forked repo, instead of the original.
 
 I've deleted some commands that were specific to programming, or unnecessary: `awsm colors cowsay domain firefly github hangman jquery mdn mustache norris stop urban vendetta xkcd zalgo`
 
