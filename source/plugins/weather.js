@@ -3,7 +3,6 @@
 /* To do:
 
  * QC flags
- * use NOAA instead of FAA's ADDS for METARs... NOAA actually cares about all aerodromes
  * split >500
  * search by city/name
  
@@ -101,8 +100,11 @@ weather = {
 			return;
 		}
 		
+        var handler = "Weather.php";
+        if (mode === "metar" || mode === "taf")
+          handler = "NOAA.php";
 		IO.jsonp({
-			url:		'http://dannybeckett.co.uk/AviationBot/Weather.php',
+			url:		'http://dannybeckett.co.uk/AviationBot/'+handler,
 			jsonpName:	'callback',
 			fun:		finish,
 			data:		{
@@ -206,8 +208,8 @@ weather = {
 			
 			var	text = {
 				weather:	'**' + link + ':** ' + resp.airport.name + ' \u2022 ' + info.join(' \u2022 '),
-				metar:		'    ' + data.metar_type + ' ' + data.raw_text,
-				taf:		'    ' + info.join('\r\n    ')
+				metar:		'    ' + data.raw_text,
+				taf:		'    ' + data.raw_text
 			};
 			
 			var	output = text[mode],
