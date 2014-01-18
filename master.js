@@ -2711,7 +2711,7 @@ var output = bot.adapter.out = {
 	'409' : 0, //count the number of conflicts
 	total : 0, //number of messages sent
 	interval : polling.interval + 500,
-	flushWait : 500,
+	flushWait : 100,
 
 	init : function () {},
 
