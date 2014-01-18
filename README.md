@@ -27,8 +27,18 @@ You can check out the source code for the above commands at [./source/plugins/we
 
 A couple of small PHP scripts ([../so-chatbot-php-helper](https://github.com/dannybeckett/so-chatbot-php-helper)) aid in converting XML to JSONP for use in JS.
 
-I've edited [./source/adapter.js](https://github.com/dannybeckett/SO-ChatBot/commit/d257d954f405f194670a24b59d781c974fffaf0e) to be slightly more helpful, and I've edited [./source/commands.js](https://github.com/dannybeckett/SO-ChatBot/commit/1be29071f7ec136ceba9a2b139efc68e43962ab5) to point `!!help` to our forked repo, instead of the original.
+**Edits:**
 
-I've deleted some commands that were specific to programming, or unnecessary: `awsm colors cowsay domain firefly github hangman jquery mdn mustache norris stop urban vendetta xkcd zalgo`
+`./source/adapter.js`
+ - [be more helpful with timeouts](https://github.com/dannybeckett/SO-ChatBot/commit/d257d954f405f194670a24b59d781c974fffaf0e);
+ - [remove 500ms delay on replies](https://github.com/dannybeckett/SO-ChatBot/commit/83696bd6b5482aacfd5e526e8091159eb0f5b6fa).
 
-I've also deleted the built-in `!!weather` command to make room for ours.
+`./source/commands.js`
+
+ - [point `!!help` to our fork, instead of upstream](https://github.com/dannybeckett/SO-ChatBot/commit/1be29071f7ec136ceba9a2b139efc68e43962ab5).
+
+**Commands deleted:**
+
+- Specific to programming or unnecessary: `awsm colors cowsay domain firefly github hangman jquery mdn mustache norris stop urban vendetta xkcd zalgo`;
+
+- The `!!weather` command to make room for ours.
