@@ -108,9 +108,9 @@ weather = {
 			if(resp.hasOwnProperty('error'))
 			{
 				var errors = {
-					'BadParams':	'Whoops, something went wrong! (@DannyBeckett)',
-					'NoAirport':	'Sorry, http://ourairports.com is currently down; this means the 3-letter IATA code you entered cannot be converted to the required 4-letter ICAO code. Type its 4-letter ICAO code instead.',
-					'NoWeather':	'Sorry, http://aviationweather.gov is currently down; weather reports cannot currently be retrieved.',
+					'BadParams':	'Whoops, something went wrong! (CC: @DannyBeckett)',
+					'NoSQL':		'Sorry, our database is currently down; this means the 3-letter IATA code you entered cannot be converted to the required 4-letter ICAO code. Type its 4-letter ICAO code instead. (CC: @DannyBeckett)',
+					'NoWeather':	'Sorry, http://aviationweather.gov is currently down; weather reports cannot currently be retrieved. Try `!!metar ' + query + '` instead (uses an alternate data source).',
 					'NoFile':		'No data could be found for ' + query + '! Check you typed the correct 3-letter IATA or 4-letter ICAO airport code.',
 					'NoICAO':		'No matching ICAO code could be found for the IATA code ' + query + '! Check you typed the correct 3-letter IATA code, or type its 4-letter ICAO code instead.'
 				};
@@ -129,7 +129,7 @@ weather = {
 				
 				if(resp.data['@attributes'].num_results === '0')
 				{
-					args.directreply('No data could be found within the last 24 hours for ' + link + '! Try `!!metar ' + query + '` or check you typed the correct 3-letter IATA or 4-letter ICAO airport code.');
+					args.directreply('No data could be found within the last 24 hours for ' + link + '! Try `!!metar ' + query + '` instead (uses an alternate data source), or check you typed the correct 3-letter IATA or 4-letter ICAO airport code.');
 					return;
 				}
 				
