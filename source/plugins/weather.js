@@ -92,7 +92,7 @@ weather = {
 		};
 		
 		IO.jsonp({
-			url:		'http://dannybeckett.co.uk/AviationBot/Weather.php',
+			url:		'http://dannybeckett.co.uk/AviationBot/Commands/Weather.php',
 			jsonpName:	'callback',
 			fun:		finish,
 			data:		{
