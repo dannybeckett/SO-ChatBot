@@ -1,6 +1,6 @@
 // GitHub shows bad indentation - open with Notepad++
 
-var convert: {
+var convert = {
 	formatNumber: function(integer)
 	{
 		// http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
