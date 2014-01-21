@@ -3,11 +3,6 @@ Help
 
 This is the bot that lives in [The Hangar](http://chat.stackexchange.com/rooms/12036/the-hangar) - for more info, ping [@DannyBeckett](http://aviation.stackexchange.com/users/97/danny-beckett).
 
-Leave an answer [here](http://meta.aviation.stackexchange.com/questions/156/what-would-you-like-the-chat-bot-to-do) with ideas for new commands! Here are some that have been suggested:
-
-- Aerodrome data - airnav or worldaerodata.com
-- [Weather frequencies & phone numbers](https://www.faa.gov/air_traffic/weather/asos/)
-
 So far, using 3-letter IATA or 4-letter ICAO airport codes, you can try:
 
 - `!!weather KJFK` to get English weather info for New York JFK airport
@@ -18,6 +13,11 @@ So far, using 3-letter IATA or 4-letter ICAO airport codes, you can try:
 You can also try:
 
 - `!!TeachMeToFly`
+
+Leave an answer [here](http://meta.aviation.stackexchange.com/questions/156/what-would-you-like-the-chat-bot-to-do) with ideas for new commands! Here are some that have been suggested:
+
+- Aerodrome data - airnav or worldaerodata.com
+- [Weather frequencies & phone numbers](https://www.faa.gov/air_traffic/weather/asos/)
 
 ---
 
