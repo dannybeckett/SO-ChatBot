@@ -24,7 +24,7 @@ You can also try:
 Technical Info
 ---
 
-You can check out the source code for the above commands at [./source/plugins/weather.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/weather.js) and [./source/plugins/teachmetofly.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/teachmetofly.js)
+You can check out the source code for the above commands at [./source/plugins/av-*.js](https://github.com/dannybeckett/SO-ChatBot/blob/master/source/plugins/).
 
 The corresponding PHP can be found at [../so-chatbot-php-helper](https://github.com/dannybeckett/so-chatbot-php-helper).
 
